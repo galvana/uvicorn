@@ -61,11 +61,12 @@ class WatchFilesReload(BaseReload):
     ) -> None:
         super().__init__(config, target, sockets)
         self.reloader_name = "WatchFiles"
-        self.reload_dirs = []
-        for directory in config.reload_dirs:
-            if Path.cwd() not in directory.parents:
-                self.reload_dirs.append(directory)
-        if (len(self.reload_dirs) == 0) and (Path.cwd() not in self.reload_dirs):
+
+        # Simply use the config's reload_dirs directly
+        self.reload_dirs = list(config.reload_dirs)
+
+        # Only add cwd if no directories were specified
+        if len(self.reload_dirs) == 0:
             self.reload_dirs.append(Path.cwd())
 
         self.watch_filter = FileFilter(config)
